@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"lormars/requester/internal/parser"
 	"net"
 	"net/http"
 	"time"
@@ -13,10 +14,12 @@ import (
 func main() {
 
 	var (
-		https = flag.Bool("https", false, "use https")
-		host  = flag.String("host", "localhost", "host name")
-		port  = flag.Int("port", 8000, "port number")
-		path  = flag.String("path", "/", "path")
+		https        = flag.Bool("https", false, "use https")
+		host         = flag.String("host", "localhost", "host name")
+		port         = flag.Int("port", 8000, "port number")
+		path         = flag.String("path", "/", "path")
+		host_prefix  = flag.String("prefix", "none", "host prefix")
+		header_input = flag.String("headers", "none", "custom headers")
 	)
 
 	flag.Parse()
@@ -27,7 +30,8 @@ func main() {
 
 	defer conn.Close()
 
-	request := fmt.Sprintf("GET %s HTTP/1.1\r\nConnction: close\r\n\r\n", *path)
+	request := parser.Parse(*path, *host, *host_prefix, *header_input)
+	fmt.Println(request)
 
 	_, err := conn.Write([]byte(request))
 	if err != nil {
