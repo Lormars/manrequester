@@ -5,11 +5,13 @@ import (
 	"strings"
 )
 
-func Parse(path string, host string, host_prefix string, header_input string) string {
+func Parse(path, host, host_prefix, method, header_input, body, body_type string) string {
 
 	header_parts := strings.Split(header_input, "|")
 
-	request := fmt.Sprintf("GET %s HTTP/1.1\r\n", path)
+	method = strings.ToUpper(method)
+
+	request := fmt.Sprintf("%s %s HTTP/1.1\r\n", method, path)
 
 	switch host_prefix {
 	case "newline":
@@ -33,7 +35,19 @@ func Parse(path string, host string, host_prefix string, header_input string) st
 			}
 		}
 	}
+
+	if body != "none" {
+		if body_type != "none" {
+			request += fmt.Sprintf("Content-Type: %s\r\n", body_type)
+		}
+		request += fmt.Sprintf("Content-Length: %d\r\n", len(body))
+	}
+
 	request += fmt.Sprintf("Connection: close\r\n\r\n")
+
+	if body != "none" {
+		request += fmt.Sprint(body)
+	}
 	return request
 
 }
