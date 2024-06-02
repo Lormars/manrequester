@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"lormars/requester/internal/matcher"
 	"lormars/requester/internal/parser"
 	"net"
 	"net/http"
@@ -21,6 +22,7 @@ func main() {
 		path         = flag.String("path", "/", "path")
 		host_prefix  = flag.String("prefix", "none", "host prefix")
 		header_input = flag.String("headers", "none", "custom headers")
+		match_body   = flag.String("mb", "none", "string to match body")
 	)
 
 	flag.Parse()
@@ -52,7 +54,16 @@ func main() {
 	}
 	defer response.Body.Close()
 
-	fmt.Println(response.Status)
+	fmt.Println("Status: ", response.Status)
+
+	if_found := fmt.Sprintf("Request to %s:%d with path as %s with host_prefix %s and header_input %s", *host, *port, *path, *host_prefix, *header_input)
+
+	if *match_body != "none" {
+		found := matcher.MatchBody(response, *match_body)
+		if found {
+			fmt.Println("Found match: ", if_found)
+		}
+	}
 
 }
 
