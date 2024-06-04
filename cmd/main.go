@@ -5,8 +5,8 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
-	"lormars/requester/internal/matcher"
-	"lormars/requester/internal/parser"
+	"github.com/lormars/requester/internal/matcher"
+	"github.com/lormars/requester/internal/parser"
 	"net"
 	"net/http"
 	"time"
@@ -32,6 +32,7 @@ func main() {
 	)
 
 	flag.Parse()
+
 	conn := setConn(*https, host, port)
 	if conn == nil {
 		return
