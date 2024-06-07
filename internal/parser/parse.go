@@ -1,8 +1,10 @@
 package parser
 
 import (
+	"encoding/base64"
 	"fmt"
 	"net/url"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -97,6 +99,25 @@ func Parse_line(line string, options *Options) *Options {
 		Match_body:   options.Match_body,
 		Match_header: options.Match_header,
 		File_input:   options.File_input,
+		OOB:          options.OOB,
 	}
+
+	v := reflect.ValueOf(&toReturn).Elem()
+	t := v.Type()
+	if options.OOB != "none" {
+		for i := 0; i < v.NumField(); i++ {
+			field := t.Field(i)
+			if field.Type.Kind() == reflect.String {
+				originalValue := v.Field(i).String()
+				if strings.Contains(originalValue, options.OOB) {
+					encoded := base64.URLEncoding.EncodeToString([]byte(parsed_url.Hostname()))
+					newValue := fmt.Sprintf("%s.%s", encoded, options.OOB)
+					v.Field(i).SetString(newValue)
+				}
+			}
+		}
+	}
+	fmt.Print(toReturn)
+
 	return &toReturn
 }

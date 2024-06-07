@@ -81,4 +81,6 @@ func Multi_Request(options *parser.Options) {
 		options := parser.Parse_line(line, options)
 		request_ch <- options
 	}
+	close(request_ch)
+	wg.Wait()
 }

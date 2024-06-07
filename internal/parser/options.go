@@ -17,6 +17,7 @@ type Options struct {
 	Match_body   string
 	Match_header string
 	File_input   string
+	OOB          string
 }
 
 func Parse_Options() *Options {
@@ -35,6 +36,7 @@ func Parse_Options() *Options {
 		match_body   = flag.String("mb", "none", "string to match body")
 		match_header = flag.String("mh", "none", "string to match header")
 		file_input   = flag.String("file", "none", "file input")
+		oob          = flag.String("oob", "none", "out of band server name")
 	)
 
 	flag.Parse()
@@ -53,6 +55,7 @@ func Parse_Options() *Options {
 		Match_body:   *match_body,
 		Match_header: *match_header,
 		File_input:   *file_input,
+		OOB:          *oob,
 	}
 	return &options
 }
