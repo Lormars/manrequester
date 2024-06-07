@@ -59,7 +59,7 @@ func Parse(options *common.Options) string {
 		request += fmt.Sprintf("Content-Length: %d\r\n", len(options.Body))
 	}
 
-	request += fmt.Sprintf("Connection: close\r\n\r\n")
+	request += fmt.Sprintf("\r\n")
 
 	if options.Body != "none" {
 		request += fmt.Sprint(options.Body)

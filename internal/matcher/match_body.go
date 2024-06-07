@@ -1,22 +1,16 @@
 package matcher
 
 import (
-	"fmt"
-	"io"
-	"net/http"
 	"strings"
+
+	"github.com/lormars/requester/common"
 )
 
-func MatchBody(response *http.Response, match_string string) bool {
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println("Error reading response body: ", err)
-		return false
-	}
-	if strings.Contains(string(body), match_string) {
-		return true
+func MatchBody(resp common.Response, match_string string) (bool, string) {
+	if strings.Contains(resp.Body, match_string) {
+		return true, resp.Body
 	}
 
-	return false
+	return false, resp.Body
 
 }

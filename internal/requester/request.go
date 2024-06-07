@@ -3,6 +3,7 @@ package requester
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"sync"
@@ -12,11 +13,11 @@ import (
 	"github.com/lormars/requester/internal/parser"
 )
 
-func Request(options *common.Options) {
+func Request(options *common.Options) *common.Response {
 
 	conn := common.SetConn(options)
 	if conn == nil {
-		return
+		return nil
 	}
 
 	defer conn.Close()
@@ -27,14 +28,14 @@ func Request(options *common.Options) {
 	_, err := conn.Write([]byte(request))
 	if err != nil {
 		fmt.Println(err)
-		return
+		return nil
 	}
 
 	reader := bufio.NewReader(conn)
 	response, err := http.ReadResponse(reader, nil)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return nil
 	}
 	defer response.Body.Close()
 
@@ -44,17 +45,31 @@ func Request(options *common.Options) {
 
 	found := false
 
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	resp := common.Response{
+		Status: response.Status,
+		Header: response.Header,
+		Body:   string(body),
+	}
+
 	if options.Match_body != "none" {
-		found = common.ToMatch(matcher.MatchBody, response, options.Match_body)
+		found, _ = common.ToMatch(matcher.MatchBody, resp, options.Match_body)
 	}
 
 	if options.Match_header != "none" {
-		found = common.ToMatch(matcher.MatchHeader, response, options.Match_header)
+		found, _ = common.ToMatch(matcher.MatchHeader, resp, options.Match_header)
 	}
 
 	if found {
 		fmt.Println("Found match: ", if_found)
 	}
+
+	return &resp
 }
 
 func Multi_Request(options *common.Options) {

@@ -30,6 +30,7 @@ func NewConfig(target string) *common.Options {
 	return parser.Parse_line(target, NewRawConfig())
 }
 
-func Run(config *common.Options) {
-	requester.Request(config)
+func Run(config *common.Options) *common.Response {
+	resp := requester.Request(config)
+	return resp
 }

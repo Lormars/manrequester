@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type Match func(r *http.Response, match string) bool
+type Match func(r Response, match string) (bool, string)
 
 type Options struct {
 	Https        bool
@@ -28,7 +28,13 @@ type Options struct {
 	OOB          string
 }
 
-func ToMatch(match Match, r *http.Response, target string) bool {
+type Response struct {
+	Status string
+	Header http.Header
+	Body   string
+}
+
+func ToMatch(match Match, r Response, target string) (bool, string) {
 	return match(r, target)
 }
 

@@ -1,22 +1,23 @@
 package matcher
 
 import (
-	"net/http"
 	"strings"
+
+	"github.com/lormars/requester/common"
 )
 
-func MatchHeader(response *http.Response, target string) bool {
+func MatchHeader(response common.Response, target string) (bool, string) {
 
 	for key, values := range response.Header {
 		if strings.Contains(key, target) {
-			return true
+			return true, ""
 		}
 		for _, value := range values {
 			if strings.Contains(value, target) {
-				return true
+				return true, ""
 			}
 		}
 	}
 
-	return false
+	return false, ""
 }
