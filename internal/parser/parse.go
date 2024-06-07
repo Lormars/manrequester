@@ -5,13 +5,17 @@ import (
 	"strings"
 )
 
-func Parse(path, host, host_prefix, method, header_input, body, body_type string) string {
+func Parse(path, host, host_header, host_prefix, method, header_input, body, body_type string) string {
 
 	header_parts := strings.Split(header_input, "|")
 
 	method = strings.ToUpper(method)
 
 	request := fmt.Sprintf("%s %s HTTP/1.1\r\n", method, path)
+
+	if host_header != "none" {
+		host = host_header
+	}
 
 	switch host_prefix {
 	case "newline":

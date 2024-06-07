@@ -5,11 +5,12 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
-	"github.com/lormars/requester/internal/matcher"
-	"github.com/lormars/requester/internal/parser"
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/lormars/requester/internal/matcher"
+	"github.com/lormars/requester/internal/parser"
 )
 
 type Match func(r *http.Response, match string) bool
@@ -19,7 +20,8 @@ func main() {
 	var (
 		https        = flag.Bool("https", false, "use https")
 		with_port    = flag.Bool("host_port", false, "include port after host in header")
-		host         = flag.String("host", "localhost", "host name")
+		host         = flag.String("host", "localhost", "host name to connect to")
+		host_header  = flag.String("host_header", "none", "host value to put in Host header")
 		port         = flag.Int("port", 8000, "port number")
 		path         = flag.String("path", "/", "path")
 		method       = flag.String("method", "GET", "custom method")
@@ -44,7 +46,7 @@ func main() {
 		*host = fmt.Sprintf("%s:%d", *host, *port)
 	}
 
-	request := parser.Parse(*path, *host, *host_prefix, *method, *header_input, *body, *body_type)
+	request := parser.Parse(*path, *host, *host_header, *host_prefix, *method, *header_input, *body, *body_type)
 	fmt.Println(request)
 
 	_, err := conn.Write([]byte(request))
