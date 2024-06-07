@@ -1,26 +1,12 @@
 package parser
 
-import "flag"
+import (
+	"flag"
 
-type Options struct {
-	Https        bool
-	With_port    bool
-	Host         string
-	Host_header  string
-	Port         int
-	Path         string
-	Method       string
-	Host_prefix  string
-	Header_input string
-	Body         string
-	Body_type    string
-	Match_body   string
-	Match_header string
-	File_input   string
-	OOB          string
-}
+	"github.com/lormars/requester/common"
+)
 
-func Parse_Options() *Options {
+func Parse_Options() *common.Options {
 	var (
 		https        = flag.Bool("https", false, "use https")
 		with_port    = flag.Bool("host_port", false, "include port after host in header")
@@ -40,7 +26,7 @@ func Parse_Options() *Options {
 	)
 
 	flag.Parse()
-	options := Options{
+	options := common.Options{
 		Https:        *https,
 		With_port:    *with_port,
 		Host:         *host,

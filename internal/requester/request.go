@@ -12,7 +12,7 @@ import (
 	"github.com/lormars/requester/internal/parser"
 )
 
-func Request(options *parser.Options) {
+func Request(options *common.Options) {
 
 	conn := common.SetConn(options)
 	if conn == nil {
@@ -57,8 +57,8 @@ func Request(options *parser.Options) {
 	}
 }
 
-func Multi_Request(options *parser.Options) {
-	request_ch := make(chan *parser.Options)
+func Multi_Request(options *common.Options) {
+	request_ch := make(chan *common.Options)
 	var wg sync.WaitGroup
 	for i := 0; i < 10; i++ {
 		wg.Add(1)

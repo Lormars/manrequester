@@ -7,9 +7,11 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/lormars/requester/common"
 )
 
-func Parse(options *Options) string {
+func Parse(options *common.Options) string {
 
 	header_parts := strings.Split(options.Header_input, "|")
 
@@ -66,7 +68,7 @@ func Parse(options *Options) string {
 
 }
 
-func Parse_line(line string, options *Options) *Options {
+func Parse_line(line string, options *common.Options) *common.Options {
 	parsed_url, err := url.Parse(line)
 	if err != nil {
 		fmt.Println(err)
@@ -84,7 +86,7 @@ func Parse_line(line string, options *Options) *Options {
 			port = 80
 		}
 	}
-	toReturn := Options{
+	toReturn := common.Options{
 		Https:        https,
 		With_port:    options.With_port,
 		Host:         parsed_url.Hostname(),
