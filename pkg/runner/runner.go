@@ -2,10 +2,11 @@ package runner
 
 import (
 	"github.com/lormars/requester/common"
+	"github.com/lormars/requester/internal/parser"
 	"github.com/lormars/requester/internal/requester"
 )
 
-func NewDefaultConfig() *common.Options {
+func NewRawConfig() *common.Options {
 	return &common.Options{
 		Https:        false,
 		With_port:    false,
@@ -23,6 +24,10 @@ func NewDefaultConfig() *common.Options {
 		File_input:   "none",
 		OOB:          "none",
 	}
+}
+
+func NewConfig(target string) *common.Options {
+	return parser.Parse_line(target, NewRawConfig())
 }
 
 func Run(config *common.Options) {
