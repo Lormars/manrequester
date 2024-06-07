@@ -2,22 +2,30 @@ package parser
 
 import (
 	"fmt"
+	"net/url"
+	"strconv"
 	"strings"
 )
 
-func Parse(path, host, host_header, host_prefix, method, header_input, body, body_type string) string {
+func Parse(options *Options) string {
 
-	header_parts := strings.Split(header_input, "|")
+	header_parts := strings.Split(options.Header_input, "|")
 
-	method = strings.ToUpper(method)
+	method := strings.ToUpper(options.Method)
 
-	request := fmt.Sprintf("%s %s HTTP/1.1\r\n", method, path)
+	request := fmt.Sprintf("%s %s HTTP/1.1\r\n", method, options.Path)
 
-	if host_header != "none" {
-		host = host_header
+	host := options.Host
+
+	if options.With_port {
+		host += fmt.Sprintf(":%d", options.Port)
 	}
 
-	switch host_prefix {
+	if options.Host_header != "none" {
+		host = options.Host_header
+	}
+
+	switch options.Host_prefix {
 	case "newline":
 		request += fmt.Sprintf("\nHost: %s\r\n", host)
 	case "space":
@@ -30,7 +38,7 @@ func Parse(path, host, host_header, host_prefix, method, header_input, body, bod
 		request += fmt.Sprintf("Host: %s\r\n", host)
 	}
 
-	if header_input != "none" {
+	if options.Header_input != "none" {
 
 		for _, part := range header_parts {
 			header := strings.SplitN(part, ":", 2)
@@ -40,18 +48,55 @@ func Parse(path, host, host_header, host_prefix, method, header_input, body, bod
 		}
 	}
 
-	if body != "none" {
-		if body_type != "none" {
-			request += fmt.Sprintf("Content-Type: %s\r\n", body_type)
+	if options.Body != "none" {
+		if options.Body_type != "none" {
+			request += fmt.Sprintf("Content-Type: %s\r\n", options.Body_type)
 		}
-		request += fmt.Sprintf("Content-Length: %d\r\n", len(body))
+		request += fmt.Sprintf("Content-Length: %d\r\n", len(options.Body))
 	}
 
 	request += fmt.Sprintf("Connection: close\r\n\r\n")
 
-	if body != "none" {
-		request += fmt.Sprint(body)
+	if options.Body != "none" {
+		request += fmt.Sprint(options.Body)
 	}
 	return request
 
+}
+
+func Parse_line(line string, options *Options) *Options {
+	parsed_url, err := url.Parse(line)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	https := false
+	if parsed_url.Scheme == "https" {
+		https = true
+	}
+	port, err := strconv.Atoi(parsed_url.Port())
+	if err != nil {
+		if parsed_url.Scheme == "https" {
+			port = 443
+		} else {
+			port = 80
+		}
+	}
+	toReturn := Options{
+		Https:        https,
+		With_port:    options.With_port,
+		Host:         parsed_url.Hostname(),
+		Host_header:  options.Host_header,
+		Port:         port,
+		Path:         options.Path,
+		Method:       options.Method,
+		Host_prefix:  options.Host_prefix,
+		Header_input: options.Header_input,
+		Body:         options.Body,
+		Body_type:    options.Body_type,
+		Match_body:   options.Match_body,
+		Match_header: options.Match_header,
+		File_input:   options.File_input,
+	}
+	return &toReturn
 }
