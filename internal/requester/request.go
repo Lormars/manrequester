@@ -23,7 +23,7 @@ func Request(options *common.Options) (*common.Response, error) {
 	defer conn.Close()
 
 	request := parser.Parse(options)
-	fmt.Println(request)
+	//fmt.Println(request)
 
 	_, err := conn.Write([]byte(request))
 	if err != nil {
