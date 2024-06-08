@@ -47,7 +47,7 @@ func Parse(options *common.Options) string {
 		for _, part := range header_parts {
 			header := strings.SplitN(part, ":", 2)
 			if len(header) == 2 {
-				request += fmt.Sprintf("%s: %s\r\n", header[0], header[1])
+				request += fmt.Sprintf("%s: %s\r\n", header[0], strings.TrimSpace(header[1]))
 			}
 		}
 	}
@@ -119,7 +119,7 @@ func Parse_line(line string, options *common.Options) *common.Options {
 			}
 		}
 	}
-	fmt.Print(toReturn)
+	//fmt.Print(toReturn)
 
 	return &toReturn
 }
