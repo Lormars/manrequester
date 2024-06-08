@@ -26,11 +26,10 @@ func NewRawConfig() *common.Options {
 	}
 }
 
-func NewConfig(target string) *common.Options {
+func NewConfig(target string) (*common.Options, error) {
 	return parser.Parse_line(target, NewRawConfig())
 }
 
-func Run(config *common.Options) *common.Response {
-	resp := requester.Request(config)
-	return resp
+func Run(config *common.Options) (*common.Response, error) {
+	return requester.Request(config)
 }

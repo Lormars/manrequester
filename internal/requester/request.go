@@ -13,11 +13,11 @@ import (
 	"github.com/lormars/requester/internal/parser"
 )
 
-func Request(options *common.Options) *common.Response {
+func Request(options *common.Options) (*common.Response, error) {
 
 	conn := common.SetConn(options)
 	if conn == nil {
-		return nil
+		return nil, fmt.Errorf("Failed to connect")
 	}
 
 	defer conn.Close()
@@ -28,14 +28,14 @@ func Request(options *common.Options) *common.Response {
 	_, err := conn.Write([]byte(request))
 	if err != nil {
 		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 
 	reader := bufio.NewReader(conn)
 	response, err := http.ReadResponse(reader, nil)
 	if err != nil {
 		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 	defer response.Body.Close()
 
@@ -48,7 +48,7 @@ func Request(options *common.Options) *common.Response {
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 
 	resp := common.Response{
@@ -69,7 +69,7 @@ func Request(options *common.Options) *common.Response {
 		fmt.Println("Found match: ", if_found)
 	}
 
-	return &resp
+	return &resp, nil
 }
 
 func Multi_Request(options *common.Options) {
@@ -93,7 +93,10 @@ func Multi_Request(options *common.Options) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		options := parser.Parse_line(line, options)
+		options, err := parser.Parse_line(line, options)
+		if err != nil {
+			continue
+		}
 		request_ch <- options
 	}
 	close(request_ch)

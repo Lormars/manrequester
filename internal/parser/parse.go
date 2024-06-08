@@ -68,11 +68,11 @@ func Parse(options *common.Options) string {
 
 }
 
-func Parse_line(line string, options *common.Options) *common.Options {
+func Parse_line(line string, options *common.Options) (*common.Options, error) {
 	parsed_url, err := url.Parse(line)
 	if err != nil {
 		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 	https := false
 	if parsed_url.Scheme == "https" {
@@ -121,5 +121,5 @@ func Parse_line(line string, options *common.Options) *common.Options {
 	}
 	//fmt.Print(toReturn)
 
-	return &toReturn
+	return &toReturn, nil
 }
