@@ -52,7 +52,7 @@ func Request(options *common.Options) (*common.Response, error) {
 	}
 
 	resp := common.Response{
-		Status: response.Status,
+		Status: response.StatusCode,
 		Header: response.Header,
 		Body:   string(body),
 	}

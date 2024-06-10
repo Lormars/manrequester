@@ -29,7 +29,7 @@ type Options struct {
 }
 
 type Response struct {
-	Status string
+	Status int
 	Header http.Header
 	Body   string
 }
