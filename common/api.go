@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"net"
@@ -39,8 +40,21 @@ func ToMatch(match Match, r Response, target string) (bool, string) {
 }
 
 func SetConn(options *Options) net.Conn {
+
+	resolver := net.Resolver{
+		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			dnsServer := "8.8.8.8:53"
+			return net.Dial(network, dnsServer)
+		},
+	}
+
+	dialer := &net.Dialer{
+		Timeout:  5 * time.Second,
+		Resolver: &resolver,
+	}
+
 	if options.Https {
-		conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", options.Host, options.Port), &tls.Config{
+		conn, err := tls.DialWithDialer(dialer, "tcp", fmt.Sprintf("%s:%d", options.Host, options.Port), &tls.Config{
 			InsecureSkipVerify: true,
 		})
 		if err != nil {
@@ -49,7 +63,7 @@ func SetConn(options *Options) net.Conn {
 		}
 		return conn
 	} else {
-		conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", options.Host, options.Port), 5*time.Second)
+		conn, err := dialer.Dial("tcp", fmt.Sprintf("%s:%d", options.Host, options.Port))
 		if err != nil {
 			fmt.Println(err)
 			return nil

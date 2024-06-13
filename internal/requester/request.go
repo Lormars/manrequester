@@ -39,7 +39,7 @@ func Request(options *common.Options) (*common.Response, error) {
 	}
 	defer response.Body.Close()
 
-	fmt.Println("Status: ", response.Status)
+	//fmt.Println("Status: ", response.Status)
 
 	if_found := fmt.Sprintf("Request to %s:%d with path as %s with host_prefix %s and header_input %s", options.Host, options.Port, options.Path, options.Host_prefix, options.Header_input)
 
