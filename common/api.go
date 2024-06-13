@@ -43,7 +43,7 @@ func SetConn(options *Options) net.Conn {
 
 	resolver := net.Resolver{
 		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-			dnsServer := "8.8.8.8:53"
+			dnsServer := "1.1.1.1:53"
 			return net.Dial(network, dnsServer)
 		},
 	}
