@@ -9,7 +9,7 @@ import (
 func NewRawConfig() *common.Options {
 	return &common.Options{
 		Https:        false,
-		With_port:    false,
+		With_port:    true,
 		Host:         "localhost",
 		Host_header:  "none",
 		Port:         8000,

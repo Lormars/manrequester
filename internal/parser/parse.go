@@ -97,7 +97,7 @@ func Parse_line(line string, options *common.Options) (*common.Options, error) {
 		Host:         parsed_url.Hostname(),
 		Host_header:  options.Host_header,
 		Port:         port,
-		Path:         options.Path,
+		Path:         parsed_url.Path,
 		Method:       options.Method,
 		Host_prefix:  options.Host_prefix,
 		Header_input: options.Header_input,
