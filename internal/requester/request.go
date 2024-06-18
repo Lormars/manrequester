@@ -34,7 +34,7 @@ func Request(options *common.Options) (*common.Response, error) {
 	reader := bufio.NewReader(conn)
 	response, err := http.ReadResponse(reader, nil)
 	if err != nil {
-		fmt.Println("Error reading response: ", err)
+		fmt.Printf("Error reading response: %v for %q", err, request)
 		return nil, err
 	}
 	defer response.Body.Close()
