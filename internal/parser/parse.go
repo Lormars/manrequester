@@ -59,12 +59,13 @@ func Parse(options *common.Options) string {
 		request += fmt.Sprintf("Content-Length: %d\r\n", len(options.Body))
 	}
 
+	request += "Accept: */*\r\n"
+	request += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0\r\n"
 	if !strings.Contains(request, "Connection:") {
-		request += fmt.Sprintf("Connection: close\r\n")
+		request += "Connection: close\r\n"
 
 	}
-
-	request += fmt.Sprintf("\r\n")
+	request += "\r\n"
 
 	if options.Body != "none" {
 		request += fmt.Sprint(options.Body)
@@ -91,13 +92,17 @@ func Parse_line(line string, options *common.Options) (*common.Options, error) {
 			port = 80
 		}
 	}
+	path := parsed_url.Path
+	if path == "" {
+		path = "/"
+	}
 	toReturn := common.Options{
 		Https:        https,
 		With_port:    options.With_port,
 		Host:         parsed_url.Hostname(),
 		Host_header:  options.Host_header,
 		Port:         port,
-		Path:         parsed_url.Path,
+		Path:         path,
 		Method:       options.Method,
 		Host_prefix:  options.Host_prefix,
 		Header_input: options.Header_input,

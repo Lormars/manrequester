@@ -23,18 +23,18 @@ func Request(options *common.Options) (*common.Response, error) {
 	defer conn.Close()
 
 	request := parser.Parse(options)
-	//fmt.Println(request)
+	//fmt.Printf("%q", request)
 
 	_, err := conn.Write([]byte(request))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error writing request: ", err)
 		return nil, err
 	}
 
 	reader := bufio.NewReader(conn)
 	response, err := http.ReadResponse(reader, nil)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error reading response: ", err)
 		return nil, err
 	}
 	defer response.Body.Close()
